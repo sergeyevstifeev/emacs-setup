@@ -1,18 +1,18 @@
-(add-to-list 'load-path "./.emacs.d/plugins")
-(add-to-list 'load-path "./.emacs.d/plugins/yasnippet")
-(add-to-list 'load-path "./.emacs.d/plugins/color-theme")
-(add-to-list 'load-path "./.emacs.d/plugins/emacs-color-theme-solarized")
+(add-to-list 'load-path "/home/sergey/.emacs.d/plugins")
+(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/yasnippet")
+(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/color-theme")
+(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/emacs-color-theme-solarized")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; erlang
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Erlang Mode
 ;;(setq load-path (cons  "/Users/sergey/git/klarna/R14B03/install/lib/erlang/lib/tools-2.6.5.1/emacs" load-path))
-(setq load-path (cons  "./git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
+(setq load-path (cons  "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
 ;;(setq erlang-root-dir "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang")
-(setq erlang-root-dir "./git/klarna/OTP/install/R14B03/lib/erlang")
+(setq erlang-root-dir "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang")
 ;;(setq exec-path (cons "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang/bin" exec-path))
-(setq exec-path (cons "./git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
+(setq exec-path (cons "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
 (require 'erlang-start)
 
 (autoload 'erlang-mode "erlang.el" "" t)
@@ -60,7 +60,6 @@
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
 
 ;; ack-grep search
-(add-to-list 'load-path "./.emacs.d/plugins/ack-and-a-half.el")
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
 (autoload 'ack-and-a-half "ack-and-a-half" nil t)
 (autoload 'ack-and-a-half-find-file-samee "ack-and-a-half" nil t)
