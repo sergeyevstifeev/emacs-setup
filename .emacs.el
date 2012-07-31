@@ -59,6 +59,8 @@
 
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
 
+(add-hook 'erlang-mode-hook 'flymake-mode)
+
 ;; ack-grep search
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
 (autoload 'ack-and-a-half "ack-and-a-half" nil t)
@@ -116,6 +118,20 @@ Emacs buffers are those whose name starts with *."
 (global-set-key (kbd "<C-S-prior>") 'previous-emacs-buffer) ; Ctrl+Shift+PageUp
 (global-set-key (kbd "<C-S-next>") 'next-emacs-buffer) ; Ctrl+Shift+PageDown
 
+
+;; Prefer backward-kill-word over Backspace
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
+
+
+(defalias 'qrr 'query-replace-regexp)
+
+
+;; Recursively fuzzy-search for file in project
+(require 'find-file-in-project)
+(global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
+
 ;; disable vc-git
 ;;(eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
 ;;(setq vc-handled-backends ())
@@ -135,7 +151,6 @@ Emacs buffers are those whose name starts with *."
 ;;(global-set-key "\C-zn" 'flymake-goto-next-error)
 ;;(global-set-key "\C-zp" 'flymake-goto-prev-error)
 
-;; Hook stolen from: https://rndwiki.hq.kred/mediawiki/index.php/H%C3%A5kan_Diary#Erlang_hook
 ;;; Erlang hook
 (defun my-erlang-mode-hook ()
  ;; Set default encodings
@@ -186,7 +201,7 @@ Emacs buffers are those whose name starts with *."
                                     (progn (setq old-fullscreen current-value)
                                            'fullboth)))))
 
-    (global-set-key [M-f11] 'toggle-fullscreen)
+;;    (global-set-key [M-f11] 'toggle-fullscreen)
 
     ; Make new frames fullscreen by default. Note: this hook doesn't do
     ; anything to the initial frame if it's in your .emacs, since that file is
