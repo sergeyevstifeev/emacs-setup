@@ -140,6 +140,10 @@ Emacs buffers are those whose name starts with *."
 (require 'find-file-in-project)
 (global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
 
+
+(global-set-key [f8] 'recompile)
+
+
 ;; disable vc-git
 ;;(eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
 ;;(setq vc-handled-backends ())
