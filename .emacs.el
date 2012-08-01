@@ -1,24 +1,21 @@
+;; Load path
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
 (add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
+(add-to-list 'load-path "~/Apps/distel/elisp/")
 
 ;; Auto-complete
 (require 'auto-complete)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
+(add-to-list 'ac-modes 'erlang-mode)
 (ac-config-default)
-(setq ac-auto-start 4)
+(setq ac-auto-start 3)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; erlang
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Erlang Mode
-;;(setq load-path (cons  "/Users/sergey/git/klarna/R14B03/install/lib/erlang/lib/tools-2.6.5.1/emacs" load-path))
+;; Erlang Mode
 (setq load-path (cons  "~/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
-;;(setq erlang-root-dir "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang")
 (setq erlang-root-dir "~/git/klarna/OTP/install/R14B03/lib/erlang")
-;;(setq exec-path (cons "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang/bin" exec-path))
 (setq exec-path (cons "~/git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
 (require 'erlang-start)
 
@@ -26,29 +23,24 @@
 (add-to-list 'auto-mode-alist '("
 \\
 .[eh]rl$" . erlang-mode))
-;; This is needed for Distel setup
-;;(let ((distel-dir "~/Apps/distel/elisp"))
-;;  (unless (member distel-dir load-path)
-;;    ;; Add distel-dir to the end of load-path
-;;    (setq load-path (append load-path (list distel-dir)))))
 
 (add-to-list 'auto-mode-alist '("
 \\
 .yaws$" . erlang-mode))
-(add-to-list 'load-path "~/Apps/distel/elisp/")
+
 (require 'distel)
 (distel-setup)
 (setq erl-nodename-cache 'kred@pike)
 
-;; -----------------------------------------------------------------------------
+
 ;; Git support
-;; -----------------------------------------------------------------------------
 (require 'git)
 (load "/usr/share/doc/git-core/contrib/emacs/git.el")
 (load "/usr/share/doc/git-core/contrib/emacs/git-blame.el")
 (add-to-list 'vc-handled-backends 'Git)
 
 
+;; ido setup
 (require 'ido)
 (ido-mode t)
 ;;(require 'ido-better-flex)
@@ -56,6 +48,7 @@
 
 (require 'ewoc)
 
+;; flymake setup
 (require 'flymake)
 (defun flymake-erlang-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -65,9 +58,8 @@
     (list "~/.emacs.d/plugins/eflymake.erl" (list local-file))))
 
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
-
 (add-hook 'erlang-mode-hook 'flymake-mode)
-(add-hook 'erlang-mode-hook 'auto-complete-mode)
+
 
 ;; ack-grep search
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
@@ -144,24 +136,6 @@ Emacs buffers are those whose name starts with *."
 (global-set-key [f8] 'recompile)
 
 
-;; disable vc-git
-;;(eval-after-load "vc" '(remove-hook 'find-file-hooks 'vc-find-file-hook))
-;;(setq vc-handled-backends ())
-
-;; mo-git-blame
-;;(autoload 'mo-git-blame-file "mo-git-blame" nil t)
-;;(autoload 'mo-git-blame-current "mo-git-blame" nil t)
-;;(setq mo-git-blame-blame-window-width 25)
-;;(global-set-key [?\C-b] 'mo-git-blame-current)
-;;(global-set-key [?\C-c ?f] 'mo-git-blame-file)
-
-;;(add-hook 'erlang-mode-hook 'flymake-mode)
-
-;;(setq ctrl-z-map (make-keymap))
-;;(global-set-key "\C-z" ctrl-z-map)
-;;(global-set-key "\C-zd" 'flymake-display-err-menu-for-current-line)
-;;(global-set-key "\C-zn" 'flymake-goto-next-error)
-;;(global-set-key "\C-zp" 'flymake-goto-prev-error)
 ;; Underline erlang exported functions
 (set-face-attribute 'erlang-font-lock-exported-function-name-face nil 
                     :underline t)
@@ -193,40 +167,32 @@ Emacs buffers are those whose name starts with *."
 
 
 (delete-selection-mode 1)
-;;(setq erlang-indent-level 2)
 (setq column-number-mode t)
-
- ;; no tabs by default. modes that really need tabs should enable
- ;; indent-tabs-mode explicitly. makefile-mode already does that, for
- ;; example.
- (setq-default indent-tabs-mode nil)
-
- ;; if indent-tabs-mode is off, untabify before saving
- ;;(add-hook 'write-file-hooks 
- ;;         (lambda () (if (not indent-tabs-mode)
- ;;                        (untabify (point-min) (point-max)))))
+;; no tabs by default. modes that really need tabs should enable
+;; indent-tabs-mode explicitly. makefile-mode already does that, for
+;; example.
+(setq-default indent-tabs-mode nil)
 
 
-    (defun toggle-fullscreen (&optional f)
-      (interactive)
-      (let ((current-value (frame-parameter nil 'fullscreen)))
-           (set-frame-parameter nil 'fullscreen
-                                (if (equal 'fullboth current-value)
-                                    (if (boundp 'old-fullscreen) old-fullscreen nil)
-                                    (progn (setq old-fullscreen current-value)
-                                           'fullboth)))))
-
+;; toogle-fullscreen is intrusive, not allowing ubuntu 'notify-send' command output
+;; to be seen. Disabled for now.
+;; (defun toggle-fullscreen (&optional f)
+;;   (interactive)
+;;   (let ((current-value (frame-parameter nil 'fullscreen)))
+;;     (set-frame-parameter nil 'fullscreen
+;;                          (if (equal 'fullboth current-value)
+;;                              (if (boundp 'old-fullscreen) old-fullscreen nil)
+;;                            (progn (setq old-fullscreen current-value)
+;;                                   'fullboth)))))
 ;;    (global-set-key [M-f11] 'toggle-fullscreen)
 
-    ; Make new frames fullscreen by default. Note: this hook doesn't do
-    ; anything to the initial frame if it's in your .emacs, since that file is
-    ; read _after_ the initial frame is created.
-    (add-hook 'after-make-frame-functions 'toggle-fullscreen)
-
+;; Make new frames fullscreen by default. Note: this hook doesn't do
+;; anything to the initial frame if it's in your .emacs, since that file is
+;; read _after_ the initial frame is created.
+;;(add-hook 'after-make-frame-functions 'toggle-fullscreen)
 
 
 (setq visible-bell t)
-
 
 
 (defun duplicate-line()
@@ -236,33 +202,35 @@ Emacs buffers are those whose name starts with *."
   (yank)
   (open-line 1)
   (next-line 1)
-  (yank)
-)
+  (yank))
 (global-set-key (kbd "\C-u") 'duplicate-line)
 
-;; recentf stuff
+;; Show recently edited files
 (require 'recentf)
 (recentf-mode 1)
 (setq recentf-max-menu-items 40)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
 
 
-   (require 'autopair)
-   (autopair-global-mode) ;; enable autopair in all buffers 
-   (setq autopair-blink nil)
+;; Auto-pairing brackets
+(require 'autopair)
+(autopair-global-mode) ;; enable autopair in all buffers 
+(setq autopair-blink nil)
 
 
-    (require 'yasnippet) ;; not yasnippet-bundle
-    (yas/initialize)
-    (yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
-    (setq yas/indent-line 'auto) 
-
-    (add-hook 'erlang-mode-hook '(lambda ()
-      (local-set-key (kbd "RET") 'newline-and-indent)))
+;; Yasnippet setup
+(require 'yasnippet) ;; not yasnippet-bundle
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
+(setq yas/indent-line 'auto) 
 
 
+;; Automatically indent when adding a newline
+(add-hook 'erlang-mode-hook '(lambda ()
+                               (local-set-key (kbd "RET") 'newline-and-indent)))
 
-;; auto-indent pasted lines
+
+;; Automatically indent pasted lines
 (dolist (command '(yank yank-pop))
        (eval `(defadvice ,command (after indent-region activate)
                 (and (not current-prefix-arg)
@@ -276,6 +244,7 @@ Emacs buffers are those whose name starts with *."
                      (let ((mark-even-if-inactive transient-mark-mode))
                        (indent-region (region-beginning) (region-end) nil))))))
 
+
 ;; turn off scrollbar
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 ;; turn off toolbar
@@ -284,6 +253,7 @@ Emacs buffers are those whose name starts with *."
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
 
+;; Fonts, etc.
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -301,17 +271,14 @@ Emacs buffers are those whose name starts with *."
  '(my-long-line-face ((((class color)) (:background "#FFC125"))) t))
 
 
-;; Color theme
+;; Color theme (solarized)
 (require 'color-theme)
 (autoload 'color-theme-solarized-light "color-theme-solarized.el" "" t)
 (autoload 'color-theme-solarized-dark "color-theme-solarized.el" "" t)
 (setq color-theme-is-global t)
-;;(color-theme-gnome2)
-;;(color-theme-solarized-dark)
 (color-theme-solarized-light)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Language environment
 (set-terminal-coding-system 'iso-8859-1)
 (setq default-buffer-file-coding-system 'iso-8859-1)
@@ -327,10 +294,7 @@ Emacs buffers are those whose name starts with *."
   (apply 'set-input-mode mode))
 
 (set-face-font 'default "fixed")
-;;(set-face-attribute 'default nil :font "-outline-Courier New-normal-normal-normal-mono-*-*-*-*-c-*-iso8859-1")
-;;(set-face-attribute 'default nil :font "-*-Monaco-normal-r-*-*-17-102-120-120-c-*-iso8859-1")
 (set-face-attribute 'default nil :font "-*-Monaco-normal-r-*-*-17-*-*-*-c-*-iso8859-1")
-;;(set-face-attribute 'default nil :family "Menlo")
 
 ;; make emacs use the clipboard
 (setq x-select-enable-clipboard t)
