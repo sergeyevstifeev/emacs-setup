@@ -67,6 +67,7 @@
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
 
 (add-hook 'erlang-mode-hook 'flymake-mode)
+(add-hook 'erlang-mode-hook 'auto-complete-mode)
 
 ;; ack-grep search
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
