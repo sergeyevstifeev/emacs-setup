@@ -1,18 +1,25 @@
-(add-to-list 'load-path "/home/sergey/.emacs.d/plugins")
-(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/yasnippet")
-(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/color-theme")
-(add-to-list 'load-path "/home/sergey/.emacs.d/plugins/emacs-color-theme-solarized")
+(add-to-list 'load-path "~/.emacs.d/plugins")
+(add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
+(add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
+(add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
+
+;; Auto-complete
+(require 'auto-complete)
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
+(ac-config-default)
+(setq ac-auto-start 4)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; erlang
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Erlang Mode
 ;;(setq load-path (cons  "/Users/sergey/git/klarna/R14B03/install/lib/erlang/lib/tools-2.6.5.1/emacs" load-path))
-(setq load-path (cons  "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
+(setq load-path (cons  "~/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
 ;;(setq erlang-root-dir "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang")
-(setq erlang-root-dir "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang")
+(setq erlang-root-dir "~/git/klarna/OTP/install/R14B03/lib/erlang")
 ;;(setq exec-path (cons "/Users/sergey/git/klarna/OTP/install/R13B04/lib/erlang/bin" exec-path))
-(setq exec-path (cons "/home/sergey/git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
+(setq exec-path (cons "~/git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
 (require 'erlang-start)
 
 (autoload 'erlang-mode "erlang.el" "" t)
