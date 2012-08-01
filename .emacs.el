@@ -11,7 +11,12 @@
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
 (add-to-list 'ac-modes 'erlang-mode)
 (ac-config-default)
-(setq ac-auto-start 3)
+(setq ac-auto-start 10)
+(setq ac-delay 0.1)
+(define-key ac-mode-map (kbd "M-c") 'auto-complete)
+(ac-set-trigger-key "TAB")
+(define-key ac-completing-map "\t" 'ac-complete)
+(define-key ac-completing-map "\r" nil)
 
 ;; Erlang Mode
 (setq load-path (cons  "~/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
