@@ -162,6 +162,9 @@ Emacs buffers are those whose name starts with *."
 ;;(global-set-key "\C-zd" 'flymake-display-err-menu-for-current-line)
 ;;(global-set-key "\C-zn" 'flymake-goto-next-error)
 ;;(global-set-key "\C-zp" 'flymake-goto-prev-error)
+;; Underline erlang exported functions
+(set-face-attribute 'erlang-font-lock-exported-function-name-face nil 
+                    :underline t)
 
 ;;; Erlang hook
 (defun my-erlang-mode-hook ()
