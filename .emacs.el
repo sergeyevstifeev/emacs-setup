@@ -65,6 +65,8 @@
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
 (add-hook 'erlang-mode-hook 'flymake-mode)
 
+;; Don't wrap long lines
+(setq-default truncate-lines t)
 
 ;; ack-grep search
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
