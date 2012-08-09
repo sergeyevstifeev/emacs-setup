@@ -84,8 +84,8 @@
   :group 'tools
   :group 'matching)
 
-(defcustom ack-and-a-half-executable (or (executable-find "ack")
-                                         (executable-find "ack-grep"))
+(defcustom ack-and-a-half-executable (or (executable-find "ack-grep")
+                                         (executable-find "ack"))
   "*The location of the ack executable"
   :group 'ack-and-a-half
   :type 'file)
@@ -330,7 +330,7 @@ This is intended to be used in `ack-and-a-half-root-directory-functions'."
   (format "--%s%s" (if enabled "" "no") name))
 
 (defun ack-and-a-half-arguments-from-options (regexp)
-  (let ((arguments (list "--nocolor" "--nogroup" "--column"
+  (let ((arguments (list "-G '^(?!(ct_run.*)|(all_runs.html))'" "--nocolor" "--nogroup" "--column"
                          (ack-and-a-half-option "smart-case" (eq ack-and-a-half-ignore-case 'smart))
                          (ack-and-a-half-option "env" ack-and-a-half-use-environment)
                          )))
