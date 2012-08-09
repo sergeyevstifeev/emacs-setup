@@ -2,6 +2,7 @@
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
 (add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
+(add-to-list 'load-path "~/.emacs.d/plugins/expand-region")
 (add-to-list 'load-path "~/.emacs.d/plugins/drag-stuff")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
 (add-to-list 'load-path "~/Apps/distel/elisp/")
@@ -71,6 +72,10 @@
 
 (require 'drag-stuff)
 (drag-stuff-global-mode t)
+
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
 
 
 ;; ack-grep search
