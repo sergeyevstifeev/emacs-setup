@@ -1,3 +1,6 @@
 [submodule ".emacs.d/plugins/emacs-color-theme-solarized"]
 	path = .emacs.d/plugins/emacs-color-theme-solarized
 	url = git://github.com/sellout/emacs-color-theme-solarized.git
+[submodule ".emacs.d/plugins/drag-stuff"]
+	path = .emacs.d/plugins/drag-stuff
+	url = git://github.com/rejeep/drag-stuff.git

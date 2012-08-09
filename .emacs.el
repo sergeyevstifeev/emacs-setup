@@ -2,6 +2,7 @@
 (add-to-list 'load-path "~/.emacs.d/plugins")
 (add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
 (add-to-list 'load-path "~/.emacs.d/plugins/color-theme")
+(add-to-list 'load-path "~/.emacs.d/plugins/drag-stuff")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
 (add-to-list 'load-path "~/Apps/distel/elisp/")
 
@@ -67,6 +68,10 @@
 
 ;; Don't wrap long lines
 (setq-default truncate-lines t)
+
+(require 'drag-stuff)
+(drag-stuff-global-mode t)
+
 
 ;; ack-grep search
 (autoload 'ack-and-a-half-same "ack-and-a-half" nil t)
