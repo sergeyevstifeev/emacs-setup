@@ -5,7 +5,8 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/expand-region")
 (add-to-list 'load-path "~/.emacs.d/plugins/drag-stuff")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
-(add-to-list 'load-path "~/Apps/distel/elisp/")
+(add-to-list 'load-path "~/Apps/wrangler_install/lib/erlang/lib/wrangler-1.0/ebin")
+(add-to-list 'load-path "~/Apps/wrangler_install/lib/erlang/lib/wrangler-1.0/elisp")
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -53,7 +54,9 @@
 ;;(require 'ido-better-flex)
 ;;(ido-better-flex/enable)
 
+
 (require 'ewoc)
+
 
 ;; flymake setup
 (require 'flymake)
@@ -63,12 +66,16 @@
           (local-file (file-relative-name temp-file
           (file-name-directory buffer-file-name))))
     (list "~/.emacs.d/plugins/eflymake.erl" (list local-file))))
-
 (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
 (add-hook 'erlang-mode-hook 'flymake-mode)
 
+
 ;; Don't wrap long lines
 (setq-default truncate-lines t)
+
+
+(require 'wrangler)
+
 
 (require 'drag-stuff)
 (drag-stuff-global-mode t)
