@@ -5,8 +5,7 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/expand-region")
 (add-to-list 'load-path "~/.emacs.d/plugins/drag-stuff")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
-(add-to-list 'load-path "~/Apps/wrangler_install/lib/erlang/lib/wrangler-1.0/ebin")
-(add-to-list 'load-path "~/Apps/wrangler_install/lib/erlang/lib/wrangler-1.0/elisp")
+(add-to-list 'load-path "~/.emacs.d/plugins/edts")
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -35,10 +34,6 @@
 (add-to-list 'auto-mode-alist '("
 \\
 .yaws$" . erlang-mode))
-
-(require 'distel)
-(distel-setup)
-(setq erl-nodename-cache 'kred@pike)
 
 
 ;; Git support
@@ -72,9 +67,6 @@
 
 ;; Don't wrap long lines
 (setq-default truncate-lines t)
-
-
-(require 'wrangler)
 
 
 (require 'drag-stuff)
@@ -158,6 +150,16 @@ Emacs buffers are those whose name starts with *."
 
 
 (global-set-key [f8] 'recompile)
+
+
+(require 'edts-start)
+
+
+(setq edts-projects
+      '(( ;; dev
+         (name       . "dev")
+         (root       . "~/dev")
+         (node-sname . "kred"))))
 
 
 ;; Underline erlang exported functions
