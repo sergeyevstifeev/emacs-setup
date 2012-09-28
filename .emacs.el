@@ -21,9 +21,9 @@
 (define-key ac-completing-map "\r" nil)
 
 ;; Erlang Mode
-(setq load-path (cons  "~/git/klarna/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
-(setq erlang-root-dir "~/git/klarna/OTP/install/R14B03/lib/erlang")
-(setq exec-path (cons "~/git/klarna/OTP/install/R14B03/lib/erlang/bin" exec-path))
+(setq load-path (cons  "~/Apps/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
+(setq erlang-root-dir "~/Apps/OTP/install/R14B03/lib/erlang")
+(setq exec-path (cons "~/Apps/OTP/install/R14B03/lib/erlang/bin" exec-path))
 (require 'erlang-start)
 
 (autoload 'erlang-mode "erlang.el" "" t)
