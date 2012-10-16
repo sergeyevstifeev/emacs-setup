@@ -6,6 +6,7 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/drag-stuff")
 (add-to-list 'load-path "~/.emacs.d/plugins/emacs-color-theme-solarized")
 (add-to-list 'load-path "~/.emacs.d/plugins/edts")
+(add-to-list 'load-path ".emacs.d/plugins/mo-git-blame")
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -37,10 +38,10 @@
 
 
 ;; Git support
-(require 'git)
-(load "/usr/share/doc/git-core/contrib/emacs/git.el")
-(load "/usr/share/doc/git-core/contrib/emacs/git-blame.el")
+(autoload 'mo-git-blame-file "mo-git-blame" nil t)
+(autoload 'mo-git-blame-current "mo-git-blame" nil t)
 (add-to-list 'vc-handled-backends 'Git)
+(global-set-key "\C-x\ v\ b" 'mo-git-blame-current)
 
 
 ;; ido setup

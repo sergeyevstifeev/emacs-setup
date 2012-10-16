@@ -10,3 +10,6 @@
 [submodule ".emacs.d/plugins/edts"]
 	path = .emacs.d/plugins/edts
 	url = git@github.com:tjarvstrand/edts.git
+[submodule ".emacs.d/plugins/mo-git-blame"]
+	path = .emacs.d/plugins/mo-git-blame
+	url = git://github.com/mbunkus/mo-git-blame.git
