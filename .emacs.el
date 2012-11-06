@@ -166,7 +166,7 @@ Emacs buffers are those whose name starts with *."
 
 
 ;; Underline erlang exported functions
-(set-face-attribute 'erlang-font-lock-exported-function-name-face nil 
+(set-face-attribute 'erlang-font-lock-exported-function-name-face nil
                     :underline t)
 
 ;;; Erlang hook
@@ -243,7 +243,7 @@ Emacs buffers are those whose name starts with *."
 
 ;; Auto-pairing brackets
 (require 'autopair)
-(autopair-global-mode) ;; enable autopair in all buffers 
+(autopair-global-mode) ;; enable autopair in all buffers
 (setq autopair-blink nil)
 
 
@@ -251,7 +251,7 @@ Emacs buffers are those whose name starts with *."
 (require 'yasnippet) ;; not yasnippet-bundle
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
-(setq yas/indent-line 'auto) 
+(setq yas/indent-line 'auto)
 
 
 ;; Automatically indent when adding a newline
