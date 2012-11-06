@@ -55,15 +55,15 @@
 
 
 ;; flymake setup
-(require 'flymake)
-(defun flymake-erlang-init ()
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-            'flymake-create-temp-inplace))
-          (local-file (file-relative-name temp-file
-          (file-name-directory buffer-file-name))))
-    (list "~/.emacs.d/plugins/eflymake.erl" (list local-file))))
-(add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
-(add-hook 'erlang-mode-hook 'flymake-mode)
+;; (require 'flymake)
+;; (defun flymake-erlang-init ()
+;;     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;             'flymake-create-temp-inplace))
+;;           (local-file (file-relative-name temp-file
+;;           (file-name-directory buffer-file-name))))
+;;     (list "~/.emacs.d/plugins/eflymake.erl" (list local-file))))
+;; (add-to-list 'flymake-allowed-file-name-masks '("\\.erl\\'" flymake-erlang-init))
+;; (add-hook 'erlang-mode-hook 'flymake-mode)
 
 
 ;; Don't wrap long lines
@@ -153,14 +153,16 @@ Emacs buffers are those whose name starts with *."
 (global-set-key [f8] 'recompile)
 
 
+;; EDTS setup
 (require 'edts-start)
-
 
 (setq edts-projects
       '(( ;; dev
          (name       . "dev")
          (root       . "~/dev")
          (node-sname . "kred"))))
+
+(global-set-key "\C-c\C-dR" 'edts-refactor-extract-function)
 
 
 ;; Underline erlang exported functions
