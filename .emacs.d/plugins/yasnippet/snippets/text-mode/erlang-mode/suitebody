@@ -1,0 +1,104 @@
+%%%============================================================================
+%%% Tests for $3
+%%%============================================================================
+-module($1).
+-behaviour(test_suite).
+
+%% Test framework
+-export([ all/0
+        , all/1
+        , init_per_suite/1
+        , end_per_suite/1
+        , init_per_testcase/2
+        , end_per_testcase/2
+        ]).
+
+%% Test cases
+-export([ $2/1
+        ]).
+
+-include("../../../test/shared/include/test_framework.hrl").
+-include("../../../test/shared/include/kred_test_lib.hrl").
+
+all() -> all(suite).
+all(doc) ->
+  ["Test cases for $3"];
+all(suite) ->
+  [ $2
+  ];
+all(nightly) ->
+  all(suite).
+
+%%--------------------------------------------------------------------
+%% Function: init_per_suite(Config) -> Config
+%% Config - [tuple()]
+%%   A list of key/value pairs, holding the test case configuration.
+%% Description: Initiation before the whole suite
+%%--------------------------------------------------------------------
+init_per_suite(Config) when is_list(Config) ->
+  kred_test_lib:backup_database(),
+  Config1 = kred_test_lib:suite_init(Config),
+  kred_test_lib:init_db(),
+  kdb_test:add_test_path(),
+  Config1.
+
+%%--------------------------------------------------------------------
+%% Function: end_per_suite(Config) -> _
+%% Config - [tuple()]
+%%   A list of key/value pairs, holding the test case configuration.
+%% Description: Cleanup after the whole suite
+%%--------------------------------------------------------------------
+end_per_suite(Config) when is_list(Config) ->
+  kred_test_lib:suite_end(Config),
+  kred_test_lib:restore_database_and_cleanup().
+
+%%--------------------------------------------------------------------
+%% Function: init_per_testcase(TestCase, Config) -> Config
+%% Case - atom()
+%%   Name of the test case that is about to be run.
+%% Config - [tuple()]
+%%   A list of key/value pairs, holding the test case configuration.
+%%--------------------------------------------------------------------
+init_per_testcase(TC, Config) ->
+  ?MODULE:TC({init, Config}). % Don't expand, use test({init, Config})
+
+%%--------------------------------------------------------------------
+%% Function: end_per_testcase(TestCase, Config) -> _
+%% Case - atom()
+%%   Name of the test case that is about to be run.
+%% Config - [tuple()]
+%%   A list of key/value pairs, holding the test case configuration.
+%% Description: Cleanup after each test case
+%%--------------------------------------------------------------------
+end_per_testcase(TC, Config) ->
+  kred_test_lib:clear_pcache(),
+  ?MODULE:TC({'end', Config}),
+  kred_test_lib:reset_for_test(),
+  ok. %% Do not expand, use test({'end', Config}) clause instead
+
+%%--------------------------------------------------------------------
+%% Testcases
+%%--------------------------------------------------------------------
+%% Testcase skeleton:
+%%
+%% sample_test(suite)           -> [];
+%% sample_test(doc)             -> [""];
+%% sample_test({init, Config})  -> Config;
+%% sample_test({'end', Config}) -> ok;
+%% sample_test(Config)          -> ok.
+%%--------------------------------------------------------------------
+
+$2(suite)            -> [];
+$2(doc)              ->
+  ["Test for $3"];
+$2({init, Config})   -> Config;
+$2({'end', _Config}) -> ok;
+$2(_Config)           ->
+  $0error(test).
+
+
+%%%_* Emacs ============================================================
+%%% Local Variables:
+%%% allout-layout: t
+%%% erlang-indent-level: 2
+%%% End:
