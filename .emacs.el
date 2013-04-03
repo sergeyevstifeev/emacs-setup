@@ -8,19 +8,6 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/edts")
 (add-to-list 'load-path ".emacs.d/plugins/mo-git-blame")
 
-;; Auto-complete
-(require 'auto-complete)
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
-(add-to-list 'ac-modes 'erlang-mode)
-(ac-config-default)
-(setq ac-auto-start 10)
-(setq ac-delay 0.1)
-(define-key ac-mode-map (kbd "M-c") 'auto-complete)
-(ac-set-trigger-key "TAB")
-(define-key ac-completing-map "\t" 'ac-complete)
-(define-key ac-completing-map "\r" nil)
-
 ;; Erlang Mode
 (setq load-path (cons  "~/Apps/OTP/install/R14B03/lib/erlang/lib/tools-2.6.6.4/emacs" load-path))
 (setq erlang-root-dir "~/Apps/OTP/install/R14B03/lib/erlang")
