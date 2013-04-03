@@ -173,6 +173,8 @@ Emacs buffers are those whose name starts with *."
   'erlang-mode
   '(("\t+" (0 'my-tab-face t))
     ("^.\\{81,\\}$" (0 'my-long-line-face t))
+    ("\\<\\(FIXME\\)" 1 font-lock-warning-face prepend)
+    ("\\<\\(TODO\\)" 1 font-lock-constant-face prepend)
     ("[ \t]+$"      (0 'my-trailing-space-face t))))
 )
 (add-hook 'erlang-mode-hook 'my-erlang-mode-hook)
