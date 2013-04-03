@@ -118,6 +118,9 @@ Emacs buffers are those whose name starts with *."
 (global-set-key "\C-c\C-k" 'kill-region)
 
 
+(global-set-key "\C-k" 'kill-whole-line)
+
+
 (defalias 'qrr 'query-replace-regexp)
 
 
