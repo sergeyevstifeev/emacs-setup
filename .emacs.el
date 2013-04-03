@@ -13,6 +13,7 @@
 (setq erlang-root-dir "~/Apps/OTP/install/R14B03/lib/erlang")
 (setq exec-path (cons "~/Apps/OTP/install/R14B03/lib/erlang/bin" exec-path))
 (require 'erlang-start)
+(require 'erlang-eunit)
 
 (autoload 'erlang-mode "erlang.el" "" t)
 (add-to-list 'auto-mode-alist '("
