@@ -1,3 +1,0 @@
-%% <tr><td> ${1:item_name} </td>
-%%     <td> ${2:type} </td>
-%%     <td> ${3:obligatory} </td></tr>
