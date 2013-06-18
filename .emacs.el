@@ -135,16 +135,6 @@ Emacs buffers are those whose name starts with *."
 ;; EDTS setup
 (require 'edts-start)
 
-(setq edts-projects
-      '(
-        ( ;; dev
-         (name          . "dev_klarna")
-         (root          . "~/dev")
-         (node-sname    . "kred_edts")
-         (otp-path      . "~/Apps/OTP/otp/")
-         (lib-dirs . ("lib" "test")))
-        ))
-
 (global-set-key "\C-c\C-dR" 'edts-refactor-extract-function)
 
 
@@ -234,7 +224,7 @@ Emacs buffers are those whose name starts with *."
 
 ;; Yasnippet setup
 (require 'yasnippet) ;; not yasnippet-bundle
-(yas/initialize)
+(yas--initialize)
 (yas/load-directory "~/.emacs.d/plugins/yasnippet/snippets")
 (setq yas/indent-line 'auto)
 
