@@ -13,3 +13,6 @@
 [submodule ".emacs.d/plugins/mo-git-blame"]
 	path = .emacs.d/plugins/mo-git-blame
 	url = git://github.com/mbunkus/mo-git-blame.git
+[submodule ".emacs.d/plugins/yasnippet"]
+	path = .emacs.d/plugins/yasnippet
+	url = https://github.com/capitaomorte/yasnippet.git
