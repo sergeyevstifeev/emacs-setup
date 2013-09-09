@@ -1,7 +1,7 @@
 ;; erlang.el --- Major modes for editing and running Erlang
 ;; %CopyrightBegin%
 ;;
-;; Copyright Ericsson AB 1996-2011. All Rights Reserved.
+;; Copyright Ericsson AB 1996-2012. All Rights Reserved.
 ;;
 ;; The contents of this file are subject to the Erlang Public License,
 ;; Version 1.1, (the "License"); you may not use this file except in
@@ -550,6 +550,32 @@ This is an elisp list of options. Each option can be either:
 - a string
 Example: '(bin_opt_info (i . \"/path1/include\") (i . \"/path2/include\"))")
 
+(defvar erlang-compile-command-function-alist
+  '((".erl\\'" . inferior-erlang-compute-erl-compile-command)
+    (".xrl\\'" . inferior-erlang-compute-leex-compile-command)
+    (".yrl\\'" . inferior-erlang-compute-yecc-compile-command)
+    ("." . inferior-erlang-compute-erl-compile-command))
+  "*Alist of filename patterns vs corresponding compilation functions.
+Each element looks like (REGEXP . FUNCTION). Compiling a file whose name
+matches REGEXP specifies FUNCTION to use to compute the compilation
+command. The FUNCTION will be called with two arguments: module name and
+default compilation options, like output directory. The FUNCTION
+is expected to return a string.")
+
+(defvar erlang-leex-compile-opts '()
+  "*Options to pass to leex when compiling xrl files.
+This is an elisp list of options. Each option can be either:
+- an atom
+- a dotted pair
+- a string")
+
+(defvar erlang-yecc-compile-opts '()
+  "*Options to pass to yecc when compiling yrl files.
+This is an elisp list of options. Each option can be either:
+- an atom
+- a dotted pair
+- a string")
+
 (eval-and-compile
   (defvar erlang-regexp-modern-p
     (if (> erlang-emacs-major-version 21) t nil)
@@ -1023,19 +1049,6 @@ behaviour.")
 	 1 'erl-function-header-face t))
   "Font lock keyword highlighting a function header.")
 
-(defface erlang-font-lock-exported-function-name-face
-  '((default (:inherit font-lock-function-name-face)))
-  "Face used for highlighting exported functions.")
-
-(defvar erlang-font-lock-exported-function-name-face
-  'erlang-font-lock-exported-function-name-face)
-
-(defvar erlang-font-lock-keywords-exported-function-header
-  (list
-   (list #'erlang-match-next-exported-function
-	 1 'erlang-font-lock-exported-function-name-face t))
-  "Font lock keyword highlighting an exported function header.")
-
 (defvar erlang-font-lock-keywords-int-bifs
   (list
    (list (concat erlang-int-bif-regexp "\\s-*(")
@@ -1175,8 +1188,7 @@ There exists three levels of Font Lock keywords for Erlang:
   `erlang-font-lock-keywords-1' - Function headers and reserved keywords.
   `erlang-font-lock-keywords-2' - Bifs, guards and `single quotes'.
   `erlang-font-lock-keywords-3' - Variables, macros and records.
-  `erlang-font-lock-keywords-4' - Exported functions, Function names,
-                                  Funs, LCs (not Atoms). 
+  `erlang-font-lock-keywords-4' - Function names, Funs, LCs (not Atoms)
 
 To use a specific level, please set the variable
 `font-lock-maximum-decoration' to the appropriate level.  Note that the
@@ -1198,7 +1210,6 @@ Example:
     (3 . erlang-font-lock-keywords-records)
     (2 . erlang-font-lock-keywords-ext-bifs)
     (4 . erlang-font-lock-keywords-ext-function-calls)
-    (4 . erlang-font-lock-keywords-exported-function-header)
     (2 . erlang-font-lock-keywords-int-bifs)
     (4 . erlang-font-lock-keywords-int-function-calls)
     (2 . erlang-font-lock-keywords-guards)
@@ -1279,7 +1290,7 @@ Lock syntax table.  The effect is that `apply' in the atom
       `( (char-after (1- (or ,pos (point)))))))
 
 ;; defvar some obsolete variables, which we still support for
-;; backwardscompatibility reasons.
+;; backwards compatibility reasons.
 (eval-when-compile
   (defvar comment-indent-hook)
   (defvar dabbrev-case-fold-search)
@@ -1570,7 +1581,7 @@ Other commands:
           ;; A dollar sign right before the double quote that ends a
           ;; string is not a character escape.
           ;;
-          ;; And a "string" has with a double quote not escaped by a
+          ;; And a "string" consists of a double quote not escaped by a
           ;; dollar sign, any number of non-backslash non-newline
           ;; characters or escaped backslashes, a dollar sign
           ;; (otherwise we wouldn't care) and a double quote.  This
@@ -1579,6 +1590,8 @@ Other commands:
           ;; know whether matching started inside a string: limiting
           ;; search to a single line keeps things sane.
           . (("\\(?:^\\|[^$]\\)\"\\(?:[^\"\n]\\|\\\\\"\\)*\\(\\$\\)\"" 1 "w")
+	     ;; Likewise for atoms
+	     ("\\(?:^\\|[^$]\\)'\\(?:[^'\n]\\|\\\\'\\)*\\(\\$\\)'" 1 "w")
              ;; And the dollar sign in $\" escapes two characters, not
              ;; just one.
              ("\\(\\$\\)\\\\\\\"" 1 "'"))))))
@@ -3071,18 +3084,52 @@ This assumes that the preceding expression is either simple
     (forward-sexp (- arg))
     (let ((col (current-column)))
       (skip-chars-backward " \t")
-      ;; Needed to match the colon in "'foo':'bar'".
-      (if (not (memq (preceding-char) '(?# ?:)))
-          col
-        ;; Special hack to handle: (note line break)
-        ;; [#myrecord{
-        ;;  foo = foo}]
-        (or
-         (ignore-errors
-           (backward-char 1)
-           (forward-sexp -1)
-           (current-column))
-         col)))))
+      ;; Special hack to handle: (note line break)
+      ;; [#myrecord{
+      ;;  foo = foo}]
+      ;; where the call (forward-sexp -1) will fail when point is at the `#'.
+      (or
+       (ignore-errors
+	 ;; Needed to match the colon in "'foo':'bar'".
+	 (cond ((eq (preceding-char) ?:)
+		(backward-char 1)
+		(forward-sexp -1)
+		(current-column))
+	       ((eq  (preceding-char) ?#)
+		;; We may now be at:
+		;; - either a construction of a new record
+		;; - or update of a record, in which case we want
+		;;   the column of the expression to be updated.
+		;;
+		;; To see which of the two cases we are at, we first
+		;; move an expression backwards, check for keywords,
+		;; then immediately an expression forwards.  Moving
+		;; backwards skips past tokens like `,' or `->', but
+		;; when moving forwards again, we won't skip past such
+		;; tokens.  We use this: if, after having moved
+		;; forwards, we're back where we started, then it was
+		;; a record update.
+		;; The check for keywords is to detect cases like:
+		;;   case Something of #record_construction{...}
+		(backward-char 1)
+		(let ((record-start (point))
+		      (record-start-col (current-column)))
+		  (forward-sexp -1)
+		  (let ((preceding-expr-col (current-column))
+			;; white space definition according to erl_scan
+			(white-space "\000-\040\200-\240"))
+		    (if (erlang-at-keyword)
+			;; The (forward-sexp -1) call moved past a keyword
+			(1+ record-start-col)
+		      (forward-sexp 1)
+		      (skip-chars-forward white-space record-start)
+		      ;; Are we back where we started?  If so, it was an update.
+		      (if (= (point) record-start)
+			    preceding-expr-col
+			(goto-char record-start)
+			(1+ (current-column)))))))
+	       (t col)))
+       col))))
 
 (defun erlang-indent-parenthesis (stack-position) 
   (let ((previous (erlang-indent-find-preceding-expr)))
@@ -3476,36 +3523,6 @@ Return nil if file contains no `-module' attribute."
 	      nil)
 	  (store-match-data md))))))
 
-(defun erlang-match-next-exported-function (max)
-  "Finds the next exported function from point to max and sets match-data.
-   Returns non-nil if found, otherwise nil."
-  (let ((ret nil))
-    (while (and (not ret) (erlang-match-next-function max))
-      (if (erlang-last-match-exported-p) (setf ret (match-data))))
-    ret))
-
-(defun erlang-match-next-function (max)
-  "Searches forward in current buffer for the next erlang function"
-  (re-search-forward erlang-defun-prompt-regexp max 'move-point))
-
-(defun erlang-last-match-exported-p ()
-  "Returns true if match-data describes an exported function."
-  (save-excursion
-    (goto-char (match-beginning 1))
-    (let* ((old-match-data (match-data))
-           (name          (erlang-remove-quotes (erlang-get-function-name)))
-           (arity         (erlang-get-function-arity))
-           (is-exported-p (erlang-function-exported-p name arity)))
-      (store-match-data old-match-data)
-      (if is-exported-p t nil))))
-
-(defun erlang-function-exported-p (name arity)
-  "Whether function of name and arity is exported in current buffer."
-  (save-excursion
-    (let* ((old-match-data (match-data))
-           (is-exported-p (member (cons name arity) (erlang-get-export))))
-      (store-match-data old-match-data)
-      is-exported-p)))
 
 (defun erlang-get-module-from-file-name (&optional file)
   "Extract the module name from a file name.
@@ -5417,6 +5434,22 @@ unless the optional NO-DISPLAY is non-nil."
       (file-name-as-directory buffer-dir))))
 
 (defun inferior-erlang-compute-compile-command (module-name opts)
+  (let ((ccfn erlang-compile-command-function-alist)
+	(res (inferior-erlang-compute-erl-compile-command module-name opts))
+	ccfn-entry
+	done)
+    (if (not (null (buffer-file-name)))
+	(while (and (not done) (not (null ccfn)))
+	  (setq ccfn-entry (car ccfn))
+	  (setq ccfn (cdr ccfn))
+	  (if (string-match (car ccfn-entry) (buffer-file-name))
+	      (let ((c-fn (cdr ccfn-entry)))
+		(setq done t)
+		(if (not (null c-fn))
+		    (setq result (funcall c-fn module-name opts)))))))
+    result))
+
+(defun inferior-erlang-compute-erl-compile-command (module-name opts)
   (let* ((out-dir-opt (assoc 'outdir opts))
 	 (out-dir     (cdr out-dir-opt)))
     (if erlang-compile-use-outdir
@@ -5439,6 +5472,48 @@ unless the optional NO-DISPLAY is non-nil."
 	 module-name (inferior-erlang-format-comma-opts
 		      (remq out-dir-opt opts))
 	 tmpvar tmpvar tmpvar2)))))
+
+(defun inferior-erlang-compute-leex-compile-command (module-name opts)
+  (let ((file-name        (buffer-file-name))
+	(erl-compile-expr (inferior-erlang-remove-any-trailing-dot
+			   (inferior-erlang-compute-erl-compile-command
+			    module-name opts))))
+    (format (concat "f(LErr1__), f(LErr2__), "
+		    "case case leex:file(\"%s\", [%s]) of"
+		    " ok -> ok;"
+		    " {ok,_} -> ok;"
+		    " {ok,_,_} -> ok;"
+		    " LErr1__ -> LErr1__ "
+		    "end of"
+		    " ok -> %s;"
+		    " LErr2__ -> LErr2__ "
+		    "end.")
+	    file-name
+	    (inferior-erlang-format-comma-opts erlang-leex-compile-opts)
+	    erl-compile-expr)))
+
+(defun inferior-erlang-compute-yecc-compile-command (module-name opts)
+  (let ((file-name        (buffer-file-name))
+	(erl-compile-expr (inferior-erlang-remove-any-trailing-dot
+			   (inferior-erlang-compute-erl-compile-command
+			    module-name opts))))
+    (format (concat "f(YErr1__), f(YErr2__), "
+		    "case case yecc:file(\"%s\", [%s]) of"
+		    " {ok,_} -> ok;"
+		    " {ok,_,_} -> ok;"
+		    " YErr1__ -> YErr1__ "
+		    "end of"
+		    " ok -> %s;"
+		    " YErr2__ -> YErr2__ "
+		    "end.")
+	    file-name
+	    (inferior-erlang-format-comma-opts erlang-yecc-compile-opts)
+	    erl-compile-expr)))
+
+(defun inferior-erlang-remove-any-trailing-dot (str)
+  (if (string= (substring str -1) ".")
+      (substring str 0 (1- (length str)))
+    str))
 
 (defun inferior-erlang-format-comma-opts (opts)
   (if (null opts)
